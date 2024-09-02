@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TriangleAlert, TriangleIcon } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const ErrorPage = () => {
@@ -15,8 +16,8 @@ const ErrorPage = () => {
           later or contact support if the issue persists.
         </p>
         <div className="mt-6">
-          <Button className="inline-flex items-center rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-red-50 shadow-sm transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-            Go Back
+          <Button variant="destructive" asChild>
+            <Link href="/">Go Back</Link>
           </Button>
         </div>
       </div>

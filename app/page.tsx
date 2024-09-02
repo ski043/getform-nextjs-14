@@ -7,18 +7,39 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { SubmitButton } from "@/components/web/SubmitButton";
-import { File } from "lucide-react";
-import { submitForm } from "./actions";
+import { SupportTicketAction, TalkToSalesAction } from "./actions";
 import { useFormState } from "react-dom";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { submissionSchema } from "./utils/ZodSchema";
 
 export default function Home() {
-  const [lastResult, action] = useFormState(submitForm, undefined);
-  const [form, fields] = useForm({
+  const [problemResult, problemAction] = useFormState(
+    TalkToSalesAction,
+    undefined
+  );
+  const [supportResult, supportAction] = useFormState(
+    SupportTicketAction,
+    undefined
+  );
+
+  const [problemForm, problemFields] = useForm({
     // Sync the result of last submission
-    lastResult,
+    lastResult: problemResult,
+
+    // Reuse the validation logic on the client
+    onValidate({ formData }) {
+      return parseWithZod(formData, { schema: submissionSchema });
+    },
+
+    // Validate the form on blur event triggered
+    shouldValidate: "onBlur",
+    shouldRevalidate: "onInput",
+  });
+
+  const [supportForm, supportFields] = useForm({
+    // Sync the result of last submission
+    lastResult: supportResult,
 
     // Reuse the validation logic on the client
     onValidate({ formData }) {
@@ -35,95 +56,131 @@ export default function Home() {
       <Card className="w-[500px]">
         <Tabs defaultValue="problem">
           <CardHeader>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="problem">Problem</TabsTrigger>
-              <TabsTrigger value="password">Question</TabsTrigger>
-              <TabsTrigger value="lol">Feedback</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="problem">Talk to Sales</TabsTrigger>
+              <TabsTrigger value="password">Support Ticket</TabsTrigger>
             </TabsList>
           </CardHeader>
           <CardContent>
             <TabsContent value="problem">
               <p className="text-muted-foreground text-sm">
-                What is the issue? If you’re reporting a bug, what are the steps
-                you took so we can reproduce the behaviour?
+                Chat with a Solutions Engineer to learn more about Vitess,
+                PlanetScale Managed, pricing, and which plan is best for your
+                team.
               </p>
               <form
-                id={form.id}
-                onSubmit={form.onSubmit}
-                action={action}
+                id={problemForm.id}
+                onSubmit={problemForm.onSubmit}
+                action={problemAction}
                 noValidate
                 className="space-y-4 flex flex-col mt-2"
               >
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
                   <Input
-                    name={fields.name.name}
-                    defaultValue={fields.name.initialValue}
-                    key={fields.name.key}
+                    name={problemFields.name.name}
+                    defaultValue={problemFields.name.initialValue}
+                    key={problemFields.name.key}
                     id="name"
+                    placeholder="John Doe"
                   />
-                  <p className="text-red-500 text-sm">{fields.name.errors}</p>
+                  <p className="text-red-500 text-sm">
+                    {problemFields.name.errors}
+                  </p>
+                </div>
+                <div className="space-y-1 flex flex-col">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    name={problemFields.email.name}
+                    defaultValue={problemFields.email.initialValue}
+                    key={problemFields.email.key}
+                    id="email"
+                    placeholder="john.doe@example.com"
+                  />
+                  <p className="text-red-500 text-sm">
+                    {problemFields.email.errors}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="problem">Question or Comment</Label>
+                  <Textarea
+                    placeholder="Pleae share some details about your needs..."
+                    className="h-32"
+                    name={problemFields.message.name}
+                    defaultValue={problemFields.message.initialValue}
+                    key={problemFields.message.key}
+                  />
+                  <p className="text-red-500 text-sm">
+                    {problemFields.message.errors}
+                  </p>
+                </div>
+
+                <SubmitButton />
+              </form>
+            </TabsContent>
+            <TabsContent value="password">
+              <p className="text-muted-foreground text-sm">
+                Chat with a Solutions Engineer to learn more about Vitess,
+                PlanetScale Managed, pricing, and which plan is best for your
+                team.
+              </p>
+              <form
+                id={supportForm.id}
+                onSubmit={supportForm.onSubmit}
+                action={supportAction}
+                noValidate
+                className="space-y-4 flex flex-col mt-2"
+              >
+                <div className="space-y-1">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    name={supportFields.name.name}
+                    defaultValue={supportFields.name.initialValue}
+                    key={supportFields.name.key}
+                    id="name"
+                    placeholder="John Doe"
+                  />
+                  <p className="text-red-500 text-sm">
+                    {supportFields.name.errors}
+                  </p>
+                </div>
+                <div className="space-y-1 flex flex-col">
+                  <Label htmlFor="email">Account Email</Label>
+                  <Input
+                    name={supportFields.email.name}
+                    defaultValue={supportFields.email.initialValue}
+                    key={supportFields.email.key}
+                    id="email"
+                    placeholder="John.Doe@example.com"
+                  />
+                  <p className="text-red-500 text-sm">
+                    {supportFields.email.errors}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="problem">Problem</Label>
                   <Textarea
                     placeholder="Something is wrong..."
                     className="h-32"
-                    name={fields.message.name}
-                    defaultValue={fields.message.initialValue}
-                    key={fields.message.key}
+                    name={supportFields.message.name}
+                    defaultValue={supportFields.message.initialValue}
+                    key={supportFields.message.key}
                   />
                   <p className="text-red-500 text-sm">
-                    {fields.message.errors}
+                    {supportFields.message.errors}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="problem">Asset</Label>
                   <Input
                     type="file"
-                    name={fields.image.name}
-                    key={fields.image.key}
+                    name={supportFields.image.name}
+                    key={supportFields.image.key}
                     id="image"
                   />
                 </div>
                 <SubmitButton />
               </form>
-            </TabsContent>
-            <TabsContent value="password">
-              <p>
-                How can we help? Please share any relevant information we may
-                need to answer your question.
-              </p>
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="current">Current password</Label>
-                  <Input id="current" type="password" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="new">New password</Label>
-                  <Input id="new" type="password" />
-                </div>
-              </div>
-              <SubmitButton />
-            </TabsContent>
-            <TabsContent value="lol">
-              <p>
-                How can we improve Linear? If you have a feature request, can
-                you also share how you would use it and why it’s important to
-                you?
-              </p>
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="current">Current password</Label>
-                  <Input id="current" type="password" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="new">New password</Label>
-                  <Input id="new" type="password" />
-                </div>
-              </div>
-
-              <SubmitButton />
             </TabsContent>
           </CardContent>
         </Tabs>
