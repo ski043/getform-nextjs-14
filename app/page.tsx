@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,7 +51,8 @@ export default function Home() {
   });
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
+    <div className="h-screen w-screen flex flex-col items-center justify-center absolute inset-0 -z-10  bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]">
+      <h1 className="text-4xl font-bold mb-7">Contact us</h1>
       <Card className="w-[500px]">
         <Tabs defaultValue="problem">
           <CardHeader>
