@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,18 +13,15 @@ import { parseWithZod } from "@conform-to/zod";
 import { submissionSchema } from "./utils/ZodSchema";
 
 export default function Home() {
-  const [problemResult, problemAction] = useFormState(
-    TalkToSalesAction,
-    undefined
-  );
+  const [salesResult, salesAction] = useFormState(TalkToSalesAction, undefined);
   const [supportResult, supportAction] = useFormState(
     SupportTicketAction,
     undefined
   );
 
-  const [problemForm, problemFields] = useForm({
+  const [salesForm, salesFields] = useForm({
     // Sync the result of last submission
-    lastResult: problemResult,
+    lastResult: salesResult,
 
     // Reuse the validation logic on the client
     onValidate({ formData }) {
@@ -51,54 +48,52 @@ export default function Home() {
   });
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center absolute inset-0 -z-10  bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]">
+    <section className="min-h-screen w-screen flex flex-col items-center justify-center px-5 absolute inset-0 -z-10 bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]">
       <h1 className="text-4xl font-bold mb-7">Contact us</h1>
-      <Card className="w-[500px]">
-        <Tabs defaultValue="problem">
-          <CardHeader>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="problem">Talk to Sales</TabsTrigger>
-              <TabsTrigger value="password">Support Ticket</TabsTrigger>
+      <Card className="max-w-[500px] w-full">
+        <Tabs defaultValue="sales">
+          <CardContent className="mt-5">
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="sales">Talk to Sales</TabsTrigger>
+              <TabsTrigger value="support">Support Ticket</TabsTrigger>
             </TabsList>
-          </CardHeader>
-          <CardContent>
-            <TabsContent value="problem">
+
+            <TabsContent value="sales">
               <p className="text-muted-foreground text-sm">
-                Chat with a Solutions Engineer to learn more about Vitess,
-                PlanetScale Managed, pricing, and which plan is best for your
-                team.
+                You want to integrate your product with us? We can help you.
+                Please contact us down below.
               </p>
               <form
-                id={problemForm.id}
-                onSubmit={problemForm.onSubmit}
-                action={problemAction}
+                className="flex flex-col gap-y-4 mt-5"
+                id={salesForm.id}
+                onSubmit={salesForm.onSubmit}
+                action={salesAction}
                 noValidate
-                className="space-y-4 flex flex-col mt-2"
               >
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
                   <Input
-                    name={problemFields.name.name}
-                    defaultValue={problemFields.name.initialValue}
-                    key={problemFields.name.key}
+                    name={salesFields.name.name}
+                    defaultValue={salesFields.name.initialValue}
+                    key={salesFields.name.key}
                     id="name"
                     placeholder="John Doe"
                   />
                   <p className="text-red-500 text-sm">
-                    {problemFields.name.errors}
+                    {salesFields.name.errors}
                   </p>
                 </div>
                 <div className="space-y-1 flex flex-col">
                   <Label htmlFor="email">Email</Label>
                   <Input
-                    name={problemFields.email.name}
-                    defaultValue={problemFields.email.initialValue}
-                    key={problemFields.email.key}
+                    name={salesFields.email.name}
+                    defaultValue={salesFields.email.initialValue}
+                    key={salesFields.email.key}
                     id="email"
                     placeholder="john.doe@example.com"
                   />
                   <p className="text-red-500 text-sm">
-                    {problemFields.email.errors}
+                    {salesFields.email.errors}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -106,30 +101,29 @@ export default function Home() {
                   <Textarea
                     placeholder="Pleae share some details about your needs..."
                     className="h-32"
-                    name={problemFields.message.name}
-                    defaultValue={problemFields.message.initialValue}
-                    key={problemFields.message.key}
+                    name={salesFields.message.name}
+                    defaultValue={salesFields.message.initialValue}
+                    key={salesFields.message.key}
                   />
                   <p className="text-red-500 text-sm">
-                    {problemFields.message.errors}
+                    {salesFields.message.errors}
                   </p>
                 </div>
 
                 <SubmitButton />
               </form>
             </TabsContent>
-            <TabsContent value="password">
+
+            <TabsContent value="support">
               <p className="text-muted-foreground text-sm">
-                Chat with a Solutions Engineer to learn more about Vitess,
-                PlanetScale Managed, pricing, and which plan is best for your
-                team.
+                Troubleshoot a technical issue or payment problem.
               </p>
               <form
+                className="flex flex-col gap-y-4 mt-5"
                 id={supportForm.id}
                 onSubmit={supportForm.onSubmit}
                 action={supportAction}
                 noValidate
-                className="space-y-4 flex flex-col mt-2"
               >
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
@@ -179,12 +173,13 @@ export default function Home() {
                     id="image"
                   />
                 </div>
+
                 <SubmitButton />
               </form>
             </TabsContent>
           </CardContent>
         </Tabs>
       </Card>
-    </div>
+    </section>
   );
 }

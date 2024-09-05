@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 export function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <div className="pt-5">
+    <>
       {pending ? (
         <Button disabled variant="outline">
           <Loader2 className="size-4 mr-2 animate-spin" /> Submitting...
@@ -15,6 +15,6 @@ export function SubmitButton() {
       ) : (
         <Button type="submit">Submit Message</Button>
       )}
-    </div>
+    </>
   );
 }
